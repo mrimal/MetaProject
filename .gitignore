@@ -6,7 +6,7 @@ config*
 *.html 
 *.xlsx
 *.csv
-
+*.log
 
 # Folder config file
 Desktop.ini
