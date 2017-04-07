@@ -29,6 +29,9 @@ for projectID in projectIDs:
     encodedHtml = html2.encode('ascii', 'ignore')
     soup = BeautifulSoup(html2)
     
+    year_list = soup.find_all(name='select', attrs={'class': 'form-control', 'onchange': "fiscalYearChange('P159303')"})
+    print(year_list)
+    
     try:
         table = soup.find('table', {"class": config.budgetTableClass})
         rows = table.find_all('tr')
@@ -44,7 +47,7 @@ for projectID in projectIDs:
             table_data = row.find_all('td', attrs={})    
             if table_data:
                 finalTable.append([data.get_text() for data in table_data])
-
+    
 
 budgetTable = pandas.DataFrame(finalTable, index=None)
 
