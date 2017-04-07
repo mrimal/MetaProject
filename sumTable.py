@@ -2,7 +2,7 @@
 """
 Created on Fri Apr 07 17:52:14 2017
 
-@author: mpr`
+@author: mpr
 """
 
 from seleniumrequests import Chrome
@@ -35,7 +35,7 @@ for projectID in projectIDs:
         indi_year = option.text
         print(indi_year)
         
-        response = webdriver.request('POST', "http://operationsportal.worldbank.org/dbbudgetExpenseSummary", data={"fiscalYear": indi_year, "projectId":projectID})
+        response = webdriver.request('POST', config.summaryTableURL, data={"fiscalYear": indi_year, "projectId":projectID})
         try:
             table = soup.find('table', {"class": "table summary-table"})
             rows = table.find_all('tr')
