@@ -1,7 +1,7 @@
+
 # -*- coding: utf-8 -*-
 """
 Created on Fri Apr 07 17:52:14 2017
-
 @author: mpr
 """
 
@@ -62,8 +62,4 @@ budgetTable = pandas.DataFrame(finalTable, index=None)
 print(budgetTable)
 writer = pandas.ExcelWriter('newOutput.xlsx')
 budgetTable.to_excel(writer, 'Sheet1' )
-writer.save()  
-        
-        
-        
-    
+writer.save() 
