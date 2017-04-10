@@ -29,7 +29,7 @@ for projectID in projectIDs:
     encodedHtml = html2.encode('ascii', 'ignore')
     soup = BeautifulSoup(html2)
     
-    year_list = soup.find_all(name='select', attrs={'class': 'form-control', 'onchange': "fiscalYearChange('P159303')"})
+    year_list = soup.find_all(name='select', attrs={'class': 'form-control'})
     print(year_list)
     
     try:
