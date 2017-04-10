@@ -38,11 +38,18 @@ for projectID in projectIDs:
     
     for option in year_list.find_all('option'):
         indi_year = option.text
-        print(indi_year)
         
-        response = webdriver.request('POST', config.summaryTableURL, data={"fiscalYear": indi_year, "projectId":projectID})
+        indi_year = indi_year.encode("utf-8")
+        indi_year = indi_year.strip()
+        print(indi_year)
+
+        response = webdriver.request('POST', config.postUrl, data={"fiscalYear": indi_year, "projectId":projectID})
+        pageHtml = response.text
+        pageencodedHtml = pageHtml.encode('ascii', 'ignore')
+        soup = BeautifulSoup(pageencodedHtml)
+    
         try:
-            table = soup.find('table', {"class": "table summary-table"})
+            table = soup.find('table', {"class": config.expenseTable})
             rows = table.find_all('tr')
         except AttributeError as e:
             print 'No table found'
