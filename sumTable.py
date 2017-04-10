@@ -18,18 +18,23 @@ webdriver = Chrome()
 #text_file.write("%s" % encodedHtml)
 #text_file.close()
 
+#Reading projectIDs from the csv file provided with the project IDs.
 
 projectIDs = pandas.read_csv('projects.csv')
 
 finalTable= []
+#Looping over all the IDs in the project csv.
 for projectID in projectIDs:
-    
+
     response = webdriver.request('POST', config.postUrl, data={"opspage": "dashboard > Budget", "disbRatio":"0.0", "projectId":projectID, "fiscalYear":"", "asaFlag":"false"})
     html2 = response.text
     encodedHtml = html2.encode('ascii', 'ignore')
-    soup = BeautifulSoup(html2)
+    soup = BeautifulSoup(encodedHtml)
     
+    #Finding the total number of years data is available for each of the projects 
     year_list = soup.find('select', {"class": "form-control"})
+    
+    #Looping over all the years 
     
     for option in year_list.find_all('option'):
         indi_year = option.text
@@ -46,15 +51,15 @@ for projectID in projectIDs:
             table_headers = row.find_all('th')
             if table_headers:
                finalTable.append([headers.get_text() for headers in table_headers])
-               
+            
             table_data = row.find_all('td', attrs={})    
             if table_data:
                 finalTable.append([data.get_text() for data in table_data])
+                
+#Writing the final table to a Pandas Dataframe and exporting it to Excel. 
 
 budgetTable = pandas.DataFrame(finalTable, index=None)
-
 print(budgetTable)
-
 writer = pandas.ExcelWriter('newOutput.xlsx')
 budgetTable.to_excel(writer, 'Sheet1' )
 writer.save()  
