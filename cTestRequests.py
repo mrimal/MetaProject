@@ -32,21 +32,29 @@ for projectID in projectIDs:
     year_list = soup.find_all(name='select', attrs={'class': 'form-control'})
     print(year_list)
     
-    try:
-        table = soup.find('table', {"class": config.budgetTableClass})
-        rows = table.find_all('tr')
-    except AttributeError as e:
-        print 'No table found'
-    
-   
-    for row in rows :
-            table_headers = row.find_all('th')
-            if table_headers:
-               finalTable.append([headers.get_text() for headers in table_headers])
-               
-            table_data = row.find_all('td', attrs={})    
-            if table_data:
-                finalTable.append([data.get_text() for data in table_data])
+    for year in year_list.find_all('option'):
+        indi_year = year.text
+        indi_year = indi_year.strip()
+        
+        response = webdriver.request('POST', config.summaryTableURL, data={"fiscalYear": indi_year, "projectId":projectID})
+        pageHtml = response.text
+        pageencodedHtml = pageHtml.encode('ascii', 'ignore')
+        soup = BeautifulSoup(pageencodedHtml)
+        try:
+            table = soup.find('table', {"class": config.budgetTableClass})
+            rows = table.find_all('tr')
+        except AttributeError as e:
+            print 'No table found'
+        
+       
+        for row in rows :
+                table_headers = row.find_all('th')
+                if table_headers:
+                   finalTable.append([headers.get_text() for headers in table_headers])
+                   
+                table_data = row.find_all('td', attrs={})    
+                if table_data:
+                    finalTable.append([data.get_text() for data in table_data])
     
 
 budgetTable = pandas.DataFrame(finalTable, index=None)
