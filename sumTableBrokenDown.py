@@ -36,9 +36,11 @@ for projectID in projectIDs:
     year_list = soup.find('select', {"class": "form-control"})
     
     #Looping over all the years. Since, year_list.find_all('option') finds the dropdown with the year options
-    
+    z = 0 
+    p = 0
     
     for option in year_list.find_all('option'):
+        
         indi_year = option.text
         
         indi_year = indi_year.encode("utf-8")
@@ -61,17 +63,28 @@ for projectID in projectIDs:
             try:
                 if table_headers:
                    yearTable.append([headers.get_text() for headers in table_headers])
-                   yearTable.insert(0,projectID)
-                
+                   for x in yearTable[z:z+1] :
+                       x.insert(0, projectID)
+                       x.insert(1, indi_year)
+                       
+                   #yearTable.insert(0,projectID)
+                   
                 table_data = row.find_all('td', attrs={})    
                 if table_data:
                     bodyTable.append([data.get_text() for data in table_data])
+                    
             except AttributeError as e:
-                print "Ain't nothing mate"
+                print "Ain't nothing brah"
                 #yearTable.append([projectID])
             #yearTable = [x + [projectID] for x in row]
             #yearTable = [x + [indi_year] for x in row]
-
+        z += 1 
+        
+        for x in bodyTable[p:p+3]:
+            x.insert(0,projectID)
+            x.insert(1,indi_year)
+        
+        p+= 3
                 
 #Writing the final table to a Pandas Dataframe and exporting it to Excel. 
 
