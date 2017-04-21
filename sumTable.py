@@ -20,11 +20,15 @@ webdriver = Chrome()
 
 #Reading projectIDs from the csv file provided with the project IDs.
 
-projectIDs = pandas.read_csv('projects.csv')
+projectIDs = pandas.read_csv('projectNewList.csv')
+df1 = projectIDs.ix[:,500:1000] 
 
-finalTable= []
+print(df1)
+
+finalTable = []
 #Looping over all the IDs in the project csv.
-for projectID in projectIDs:
+for projectID in df1:
+    
 
     response = webdriver.request('POST', config.postUrl, data={"opspage": "dashboard > Budget", "disbRatio":"0.0", "projectId":projectID, "fiscalYear":"", "asaFlag":"false"})
     html2 = response.text
@@ -37,6 +41,8 @@ for projectID in projectIDs:
     #Looping over all the years 
     
     for option in year_list.find_all('option'):
+        tempTable= []
+
         indi_year = option.text
         
         indi_year = indi_year.encode("utf-8")
@@ -57,12 +63,17 @@ for projectID in projectIDs:
         for row in rows :
             table_headers = row.find_all('th')
             if table_headers:
-               finalTable.append([headers.get_text() for headers in table_headers])
+               tempTable.append([headers.get_text() for headers in table_headers])
             
             table_data = row.find_all('td', attrs={})    
             if table_data:
-                finalTable.append([data.get_text() for data in table_data])
-                
+                tempTable.append([data.get_text() for data in table_data])
+        for indiRows in tempTable:
+            indiRows.insert(0, projectID)
+            indiRows.insert(1, indi_year)
+        
+        finalTable = finalTable + tempTable
+        
 #Writing the final table to a Pandas Dataframe and exporting it to Excel. 
 
 budgetTable = pandas.DataFrame(finalTable, index=None)

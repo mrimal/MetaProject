@@ -23,10 +23,11 @@ webdriver = Chrome()
 projectIDs = pandas.read_csv('projects.csv')
 
 finalTable= []
+yearTable = []
+bodyTable = []
 #Looping over all the IDs in the project csv.
 for projectID in projectIDs:
-    yearTable = []
-    bodyTable = []
+   
     response = webdriver.request('POST', config.postUrl, data={"opspage": "dashboard > Budget", "disbRatio":"0.0", "projectId":projectID, "fiscalYear":"", "asaFlag":"false"})
     html2 = response.text
     encodedHtml = html2.encode('ascii', 'ignore')
@@ -36,8 +37,8 @@ for projectID in projectIDs:
     year_list = soup.find('select', {"class": "form-control"})
     
     #Looping over all the years. Since, year_list.find_all('option') finds the dropdown with the year options
-    z = 0 
-    p = 0
+    z = 0  #Table header counter
+    p = 0  #Table body Counter
     
     for option in year_list.find_all('option'):
         
@@ -85,11 +86,14 @@ for projectID in projectIDs:
             x.insert(1,indi_year)
         
         p+= 3
-                
+  
+finalTable = yearTable + bodyTable
+              
 #Writing the final table to a Pandas Dataframe and exporting it to Excel. 
 
-#budgetTable = pandas.DataFrame(finalTable, index=None)
-#print(budgetTable)
-#writer = pandas.ExcelWriter('newOutput.xlsx')
-#budgetTable.to_excel(writer, 'Sheet1' )
-#writer.save() 
+budgetTable = pandas.DataFrame(finalTable, index=None)
+print(budgetTable)
+writer = pandas.ExcelWriter('newOutput.xlsx')
+budgetTable.to_excel(writer, 'Sheet1' )
+writer.save() 
+
