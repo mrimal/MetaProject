@@ -20,14 +20,17 @@ webdriver = Chrome()
 
 #Reading projectIDs from the csv file provided with the project IDs.
 
-projectIDs = pandas.read_csv('projectNewList.csv')
-df1 = projectIDs.ix[:,500:1000] 
+#projectIDs = pandas.read_csv('projectNewList.csv')
+projectIDs = pandas.read_csv('closedid.csv')
+
+df1 = projectIDs.ix[:,1:] 
 
 print(df1)
 
 finalTable = []
 #Looping over all the IDs in the project csv.
 for projectID in df1:
+    
     
 
     response = webdriver.request('POST', config.postUrl, data={"opspage": "dashboard > Budget", "disbRatio":"0.0", "projectId":projectID, "fiscalYear":"", "asaFlag":"false"})
@@ -78,6 +81,6 @@ for projectID in df1:
 
 budgetTable = pandas.DataFrame(finalTable, index=None)
 print(budgetTable)
-writer = pandas.ExcelWriter('newOutput.xlsx')
+writer = pandas.ExcelWriter('closedOutput.xlsx')
 budgetTable.to_excel(writer, 'Sheet1' )
 writer.save() 
